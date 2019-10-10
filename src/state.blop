@@ -1,0 +1,14 @@
+import create from './lib/state.blop'
+
+state: object = {
+  page: 'index',
+  pages: {
+    index: {
+      content: 'Hello World!'
+    }
+  }
+}
+
+def createState(initialState) {
+  return create(initialState || state)
+}

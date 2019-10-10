@@ -1,0 +1,20 @@
+import { Router } from './lib/router.blop'
+
+async def indexHandler(params, state) {
+  state.page = 'index'
+  console.log('indexHandler called')
+}
+
+def createRouter(state, global) {
+  router = new Router(null, state, global)
+
+  router.add({ path: '/404/:reason/', name: '404', handler: (params) => {
+      state.page = ''
+      state.reason = params.reason
+    }
+  })
+  router.add({ path: '/', name: 'root', handler: indexHandler })
+
+  router.init()
+  return router
+}

@@ -1,0 +1,9 @@
+{
+  "locales": [
+    "src/translation/locale-en_GB.json",
+    "src/translation/locale-de_CH.json",
+    "src/translation/locale-fr_FR.json",
+    "src/translation/locale-it_IT.json",
+    "src/translation/locale-ja_JP.json"
+  ]
+}

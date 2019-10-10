@@ -1,0 +1,37 @@
+.translation-navigation {
+  font-size: 14px;
+}
+
+.translation-key-value {
+  display: flex;
+}
+
+.translation-key {
+  min-width: 12em;
+  max-width: 12em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.translation-value {
+  flex-grow: 1;
+  margin-bottom: 6px;
+}
+
+ul {
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.modal {
+  display: block;
+}
+
+.modal-translation {
+  width: 100%;
+}
+
+.modal-translation input {
+  width: 100%;
+}

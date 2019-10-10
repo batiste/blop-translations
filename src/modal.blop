@@ -1,0 +1,105 @@
+
+
+async def putTranslation(state, lang) {
+  console.log('getTranslation')
+  state.loadingTranslation = true
+  try {
+    response = await fetch(`/update-translation`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(lang)
+    })
+  } catch e {
+    state.loadingTranslation = false
+    return
+  }
+  state.loadingTranslation = false
+}
+
+def getValue(trans, path) {
+  v = trans
+  for p in path {
+    v := v[p]
+    if !v {
+      return v
+    }
+  }
+  return v
+}
+
+def putValue(trans, path, value) {
+  v = trans
+  path := [...path]
+  last = path.pop()
+  for p in path {
+    v := v[p]
+  }
+  v[last] = value
+}
+
+// this make the component a singeton
+previousValues = []
+
+EditModal = (params, children, node) => {
+  { state } = params
+  { edit } = state
+  path = edit.split('.').splice(1)
+  node.lifecycle({
+    mount: () => {
+      previousValues := []
+      for _lang in state.translations {
+        previousValues.push(getValue(_lang.content, path))
+      }
+    }
+  })
+
+  def cancel() {
+    state.edit = null
+    i = 0
+    for l in state.translations {
+      putValue(l.content, path, previousValues[i])
+      i := i + 1
+    }
+  }
+  def save(lang) {
+    for _lang in state.translations {
+      putTranslation(state, _lang)
+    }
+    state.edit = null
+  }
+  def change(lang) {
+    return (e) => {
+      putValue(lang.content, path, e.target.value)
+    }
+  }
+
+  <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">'Edit key 'edit''</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" on={ click: cancel }>
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          for lang in state.translations {
+            value = getValue(lang.content, path)
+            <label class="modal-translation">
+              = lang.file
+              <input type="text"
+                on={ change: change(lang) }
+               class="translation-value form-control form-control-sm" value />
+            </label>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" on={ click: cancel }>'Close and cancel'</button>
+          <button type="button" class="btn btn-primary" on={ click: save }>'Save changes'</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }

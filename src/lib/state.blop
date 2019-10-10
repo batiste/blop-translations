@@ -1,0 +1,86 @@
+def isObject(value) {
+  if value == null || value == undefined {
+    return false
+  }
+  return value.constructor == Object || typeof value == 'object'
+}
+
+def create(state, options={ readOnly: false }) {
+  modificationTable = []
+  callbacks = []
+  router = null
+  { readOnly } = options
+  hasBeenFlushed = false
+  def flush() {
+    modificationTable := []
+    hasBeenFlushed := true
+  }
+  def listen(callback) {
+    callbacks.push(callback)
+  }
+  def trigger(path) {
+    callbacks.forEach((fct) => fct(path))
+  }
+  root = {
+    flush,
+    listen,
+    trigger,
+    modificationTable,
+    raw: state
+  }
+  def handler(currentState, path='', parentState) {
+    def hasChanged(extrapath='') {
+      // just to return true on the first time
+      if !hasBeenFlushed {
+        return true
+      }
+      completePath = ''path''extrapath''
+      return !!modificationTable.find(
+        (modification) => modification.path.startsWith(completePath))
+    }
+    return {
+      get: def (obj, prop) {
+        if prop == '$' {
+          return root
+        }
+        if prop == 'hasChanged' {
+          return hasChanged
+        }
+        // be sure to not double wrap a Proxy
+        if isObject(obj[prop]) && !obj[prop].$ {
+          return new Proxy(
+            currentState[prop],
+            handler(currentState[prop],
+            ''path'.'prop'', currentState))
+        }
+        return obj[prop]
+      },
+      set: def (obj, prop, value) {
+        if readOnly {
+          throw new Error(``obj`.`prop` is read only`)
+        }
+        if prop == '$' {
+          throw new Error(`You cannot redefine the $ property in a proxied state`)
+        }
+        modificationTable.push({ path: ''path'.'prop'', action: 'set', value })
+        obj[prop] = value
+        trigger(''path'.'prop'')
+        return true
+      },
+      deleteProperty: def (target, prop) {
+        if readOnly {
+          throw new Error(`target.`prop` is read only`)
+        }
+        if target.hasOwnProperty(prop) {
+          modificationTable.push({ path: ''path'.'prop'', action: 'delete' })
+          delete target[prop]
+        } else {
+          return false
+        }
+        trigger(''path'.'prop'')
+        return true
+      }
+    }
+  }
+  return new Proxy(state, handler(state))
+}

@@ -1,0 +1,84 @@
+import './main.css'
+import EditModal from './modal.blop'
+
+async def getTranslation(state) {
+  console.log('getTranslation')
+  state.loadingTranslation = true
+  try {
+    response = await fetch(`/raw-json`)
+  } catch e {
+    state.loadingTranslation = false
+    return
+  }
+  state.loadingTranslation = false
+  state.translations = await response.json()
+}
+
+TranslationList = (params, children, node) => {
+  { translations, path, filter, state } = params
+  def _click(newPath) {
+    return def click(e) {
+      state.edit = newPath
+    }
+  }
+  def addKey() {
+    key = prompt("Spaces, will converted in _")
+    if !key {
+      return
+    }
+    key := key.replace(/\s/g, '_').toUpperCase()
+    state.edit = ''path'.'key''
+  }
+  <ul>
+    if path && (!filter || path.toLowerCase().includes(filter.toLowerCase())) {
+      <li class="translation-key-value">
+        <span class="translation-key">
+        </span>
+        <button type="button" class="btn btn-light translation-value" on={ click: addKey }>'Add a translation key here'</button>
+      </li>
+    }
+    for key, value in translations {
+      newPath = ''path'.'key''
+      if !filter || newPath.toLowerCase().includes(filter.toLowerCase()) {
+        <li class="translation-key-value">
+          <span class="translation-key" title=newPath>key</span>
+          if value.length {
+            <input type="text"
+              class="translation-value form-control form-control-sm"
+              on={ click: _click(newPath, translations, key) } value=value />
+          } else {
+            <TranslationList translations=value filter=filter path=''path'.'key'' state />
+          }
+        </li>
+      } else {
+        if !value.length {
+          <TranslationList translations=value filter=filter path=''path'.'key'' state />
+        }
+      }
+    }
+  </ul>
+}
+
+Index = (state) => {
+  <div class='translation-navigation container'>
+    <h1>'Translations tool'</h1>
+    def keyup(e) {
+      state.filter = e.target.value
+    }
+    if state.edit {
+      <EditModal state></EditModal>
+    }
+    if state.translations {
+      <div class="form-group">
+        <label for="filter">'Filter'</label>
+        <input type="text" on={ keyup } class="form-control"
+          id="filter" placeholder="Filter keys" value=state.filter />
+      </div>
+      <TranslationList translations=state.translations[0].content filter=state.filter state path='' />
+    } elseif !state.loadingTranslation {
+      getTranslation(state)
+    }
+  </div>
+}
+
+

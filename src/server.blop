@@ -1,0 +1,93 @@
+import 'express'
+import { Index } from './index.blop'
+import { createState } from './state.blop'
+import { createRouter } from './routing.blop'
+import 'webpack'
+import 'webpack-dev-middleware' as middleware
+import 'snabbdom-to-html' as toHTML
+import 'path' as nodepath
+import '../webpack.client.js' as webpackClientConf
+import 'body-parser' as bodyParser
+import 'fs'
+
+app = express()
+app.use(bodyParser.json())
+
+/* If there is any client state that needs
+   to be saved on the server (session data),
+   this should go in there */
+savedState = null
+
+render = async (path: string) => {
+  state = createState(null)
+  router = createRouter(state)
+  await router.go(path)
+  tree = Index(state)
+  console.log('Server render executed for 'path'')
+  return tree
+}
+
+def escapeJSON(json) {
+  return JSON.stringify(json).replace(/</gm, '&lt;')
+}
+
+locales = []
+
+app.get('/raw-json', (req, res) => {
+  files = []
+  for local in locales: array {
+    files.push({
+      file: local,
+      content: JSON.parse(fs.readFileSync(local).toString())
+    })
+  }
+  res.json(files)
+})
+
+app.put('/update-translation', (req, res) => {
+  fs.writeFileSync(req.body.file, JSON.stringify(req.body.content, null, 2))
+  res.json({})
+})
+
+app.get('/', async (req, res) => {
+  html = toHTML(await render(req.path))
+  state = createState(savedState)
+  res.send(`
+    <html>
+      <head>
+        <title>Translation tool</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      </head>
+      <body>
+        <div id="app">
+          `html`
+        </div>
+      </body>
+      <script>window.INITIAL_STATE = `escapeJSON(savedState || state)`</script>
+      <script src="/bundle/client.js"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </html>
+  `)
+})
+
+
+def run(port=3000, config) {
+  def serverReady() {
+    GREEN = '\x1b[32m'
+    NC = '\x1B[0m'
+    console.log(''GREEN'[server]'NC' Running on http://localhost:'port'')
+  }
+
+  // we only rebuild the client config
+  locales := config.locales
+  compiler = webpack(webpackClientConf)
+  instance = middleware(compiler, {
+    publicPath: '/bundle'
+  })
+  app.use(instance)
+  instance.waitUntilValid(serverReady)
+  app.listen(port, serverReady)
+}
+
