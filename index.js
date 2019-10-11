@@ -16,5 +16,5 @@ if (!process.argv.slice(2).length || !program.config) {
 
 if (program.config) {
   const config = JSON.parse(fs.readFileSync(program.config));
-  server.run(program.port || 3000, config)
+  server.runStatic(program.port || 3000, config)
 }

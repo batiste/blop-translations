@@ -9,6 +9,7 @@ import 'path' as nodepath
 import '../webpack.client.js' as webpackClientConf
 import 'body-parser' as bodyParser
 import 'fs'
+import 'path' as pathModule
 
 app = express()
 app.use(bodyParser.json())
@@ -72,14 +73,13 @@ app.get('/', async (req, res) => {
   `)
 })
 
+GREEN = '\x1b[32m'
+NC = '\x1B[0m'
 
 def run(port=3000, config) {
   def serverReady() {
-    GREEN = '\x1b[32m'
-    NC = '\x1B[0m'
     console.log(''GREEN'[server]'NC' Running on http://localhost:'port'')
   }
-
   // we only rebuild the client config
   locales := config.locales
   compiler = webpack(webpackClientConf)
@@ -91,3 +91,14 @@ def run(port=3000, config) {
   app.listen(port, serverReady)
 }
 
+def runStatic(port=3000, config) {
+  file = pathModule.resolve(__dirname, '..', 'dist', 'client.js')
+  app.get('/bundle/client.js', (req, res) => {
+    res.send(fs.readFileSync(file).toString())
+  })
+  def serverReady() {
+    console.log(''GREEN'[server]'NC' Running on http://localhost:'port'')
+  }
+  locales := config.locales
+  app.listen(port, serverReady)
+}

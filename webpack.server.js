@@ -8,6 +8,10 @@ const serverConfig = {
   mode: 'development',
   stats: 'normal',
   target: 'node',
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
   externals: [nodeExternals()],
   entry: {
     main: './src/server.blop',

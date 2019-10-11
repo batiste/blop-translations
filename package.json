@@ -1,6 +1,6 @@
 {
   "name": "blop-translations",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "Translating Angular translation file made easy",
   "main": "src/server.blop",
   "bin": {
@@ -10,7 +10,8 @@
     "start": "npm run server",
     "server": "npm run build:server && node dist/server.js",
     "build:server": "node_modules/webpack/bin/webpack.js --config webpack.server.js",
-    "build:client": "node_modules/webpack/bin/webpack.js --config webpack.client.js"
+    "build:client": "node_modules/webpack/bin/webpack.js --config webpack.client.js",
+    "build": "npm run build:server && npm run build:client"
   },
   "author": "Batiste Bieler",
   "license": "ISC",
