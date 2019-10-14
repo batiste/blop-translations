@@ -1,7 +1,6 @@
 
 
 async def putTranslation(state, lang) {
-  console.log('getTranslation')
   state.loadingTranslation = true
   try {
     response = await fetch(`/update-translation`, {

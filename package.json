@@ -7,7 +7,7 @@
     "translations": "./index.js"
   },
   "scripts": {
-    "start": "npm run server",
+    "start": "RUN=true npm run server",
     "server": "npm run build:server && node dist/server.js",
     "build:server": "node_modules/webpack/bin/webpack.js --config webpack.server.js",
     "build:client": "node_modules/webpack/bin/webpack.js --config webpack.client.js",

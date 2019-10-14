@@ -1,6 +1,7 @@
-# Blop example project
+# Angular translation tool, JSON file edit 
 
-This project is an Hello World example made with [the Blop language](https://github.com/batiste/blop-language) using SSR, express and webpack
+This project can manage a list of translation file
+in the JSON with nested namespaces (Namespaced JSON) or JSON with namespaces in key (Flat JSON)
 
 To run:
 
@@ -8,4 +9,21 @@ To run:
 npm install
 npm start
 open http://localhost:3000
+```
+
+Or install globally 
+
+```
+translations -c <path to config file>
+```
+
+A config file is a JSON file that should point to all your translation files:
+
+```
+{
+  "locales": [
+    './src/translation/en.json',
+    './src/translation/fr.json'
+  ]
+}
 ```
