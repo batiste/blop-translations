@@ -49,9 +49,8 @@ TranslationList = (params, children, node) => {
 
 TranslationPage = (params, children, node) => {
   { state } = params
-  node.lifecycle({ mount: () => {
-      getTranslation(state)
-    }
+  node.mount(() => {
+    getTranslation(state)
   })
   <div class='translation-navigation container'>
     <h1>'Translations tool'</h1>

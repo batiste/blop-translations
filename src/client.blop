@@ -19,6 +19,7 @@ render = () => {
 // boot up the app on the client
 { refresh, init } = mount(document.getElementById('app'), render)
 init()
+router.init()
 
 proxiedState.$.listen((path) => {
   refresh((time) => {
