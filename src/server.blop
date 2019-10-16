@@ -47,7 +47,7 @@ app.get('/raw-json', (req, res) => {
 })
 
 app.put('/update-translation', (req, res) => {
-  fs.writeFileSync(req.body.file, JSON.stringify(req.body.content, null, 2))
+  result = fs.writeFileSync(req.body.file, ''JSON.stringify(req.body.content, null, 2)'\n')
   res.json({})
 })
 

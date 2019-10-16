@@ -28,14 +28,25 @@ def getValue(trans, path) {
   return v
 }
 
-def putValue(trans, path, value) {
-  v = trans
+def putValue(lang, path, value) {
+  v = lang.content
   path := [...path]
   last = path.pop()
+  parent = null
+  parentPath = null
   for p in path {
+    parent := v
+    parentPath := p
     v := v[p]
   }
   v[last] = value
+  if parent {
+    ordered = {}
+    Object.keys(v).sort().forEach((key) => {
+      ordered[key] = v[key]
+    })
+    parent[parentPath] = ordered
+  }
 }
 
 // this make the component a singeton
@@ -57,8 +68,8 @@ EditModal = (params, children, node) => {
   def cancel() {
     state.edit = null
     i = 0
-    for l in state.translations {
-      putValue(l.content, path, previousValues[i])
+    for lang in state.translations {
+      putValue(lang, path, previousValues[i])
       i := i + 1
     }
   }
@@ -70,7 +81,7 @@ EditModal = (params, children, node) => {
   }
   def change(lang) {
     return (e) => {
-      putValue(lang.content, path, e.target.value)
+      putValue(lang, path, e.target.value)
     }
   }
 
