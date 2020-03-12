@@ -14,7 +14,5 @@ def createRouter(state, global) {
     }
   })
   router.add({ path: '/', name: 'root', handler: indexHandler })
-
-  router.init()
   return router
 }

@@ -1,18 +1,6 @@
 import './main.css'
 import EditModal from './modal.blop'
-
-async def getTranslation(state) {
-  console.log('getTranslation')
-  state.loadingTranslation = true
-  try {
-    response = await fetch(`/raw-json`)
-  } catch e {
-    state.loadingTranslation = false
-    return
-  }
-  state.loadingTranslation = false
-  state.translations = await response.json()
-}
+import getTranslation from './service.blop'
 
 TranslationList = (params, children, node) => {
   { translations, path, filter, state } = params
@@ -59,7 +47,11 @@ TranslationList = (params, children, node) => {
   </ul>
 }
 
-Index = (state) => {
+TranslationPage = (params, children, node) => {
+  { state } = params
+  node.mount(() => {
+    getTranslation(state)
+  })
   <div class='translation-navigation container'>
     <h1>'Translations tool'</h1>
     def keyup(e) {
@@ -75,10 +67,15 @@ Index = (state) => {
           id="filter" placeholder="Filter keys" value=state.filter />
       </div>
       <TranslationList translations=state.translations[0].content filter=state.filter state path='' />
-    } elseif !state.loadingTranslation {
-      getTranslation(state)
+    }
+    if state.failed {
+      <p>'Error: 'JSON.stringify(state.failed)''</p>
     }
   </div>
+}
+
+Index = (state) => {
+  <TranslationPage state />
 }
 
 

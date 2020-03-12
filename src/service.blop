@@ -1,0 +1,15 @@
+import { default as fetch } from 'node-fetch'
+loadingTranslation = false
+
+async def getTranslation(state) {
+  loadingTranslation := true
+  try {
+    response = await fetch(`/raw-json`)
+  } catch e {
+    loadingTranslation := false
+    state.failed = e
+    return
+  }
+  loadingTranslation := false
+  state.translations = await response.json()
+}

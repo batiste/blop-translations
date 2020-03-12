@@ -10,6 +10,7 @@ import '../webpack.client.js' as webpackClientConf
 import 'body-parser' as bodyParser
 import 'fs'
 import 'path' as pathModule
+import 'process'
 
 app = express()
 app.use(bodyParser.json())
@@ -46,7 +47,7 @@ app.get('/raw-json', (req, res) => {
 })
 
 app.put('/update-translation', (req, res) => {
-  fs.writeFileSync(req.body.file, JSON.stringify(req.body.content, null, 2))
+  result = fs.writeFileSync(req.body.file, ''JSON.stringify(req.body.content, null, 2)'\n')
   res.json({})
 })
 
@@ -89,6 +90,14 @@ def run(port=3000, config) {
   app.use(instance)
   instance.waitUntilValid(serverReady)
   app.listen(port, serverReady)
+}
+
+if process.env.RUN {
+  run(3000, { locales: [
+    './src/translation/en.json',
+    './src/translation/fr.json'
+  ]
+  })
 }
 
 def runStatic(port=3000, config) {
