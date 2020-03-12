@@ -1,0 +1,6 @@
+{
+    "locales": [
+        "./src/translations/en.json",
+        "./src/translations/fr.json"
+    ]
+}
