@@ -5,7 +5,7 @@ const fs = require('fs');
 const server = require('./dist/server');
 
 program
-  .version('0.1.0')
+  .version('0.1.6')
   .option('-c, --config <file>', 'config file')
   .option('-p, --port <number>', 'port')
   .parse(process.argv);
