@@ -2,10 +2,10 @@ import './main.css'
 import EditModal from './modal.blop'
 import getTranslation from './service.blop'
 
-TranslationList = (params, children, node) => {
+TranslationList = (params, _children, _node) => {
   { translations, path, filter, state } = params
   def _click(newPath) {
-    return def click(e) {
+    return def click(_e) {
       state.edit = newPath
     }
   }
@@ -47,7 +47,7 @@ TranslationList = (params, children, node) => {
   </ul>
 }
 
-TranslationPage = (params, children, node) => {
+TranslationPage = (params, _children, node) => {
   { state } = params
   node.mount(() => {
     getTranslation(state)

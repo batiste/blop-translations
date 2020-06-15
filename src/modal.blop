@@ -3,14 +3,14 @@
 async def putTranslation(state, lang) {
   state.loadingTranslation = true
   try {
-    response = await fetch(`/update-translation`, {
+    _response = await fetch(`/update-translation`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(lang)
     })
-  } catch e {
+  } catch _e {
     state.loadingTranslation = false
     return
   }
@@ -52,7 +52,7 @@ def putValue(lang, path, value) {
 // this make the component a singeton
 previousValues = []
 
-EditModal = (params, children, node) => {
+EditModal = (params, _children, node) => {
   { state } = params
   { edit } = state
   path = edit.split('.').splice(1)
@@ -73,7 +73,7 @@ EditModal = (params, children, node) => {
       i := i + 1
     }
   }
-  def save(lang) {
+  def save() {
     for _lang in state.translations {
       putTranslation(state, _lang)
     }

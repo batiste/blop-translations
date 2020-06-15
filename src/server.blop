@@ -35,7 +35,7 @@ def escapeJSON(json) {
 
 locales = []
 
-app.get('/raw-json', (req, res) => {
+app.get('/raw-json', (_req, res) => {
   files = []
   for local in locales: array {
     files.push({
@@ -47,7 +47,7 @@ app.get('/raw-json', (req, res) => {
 })
 
 app.put('/update-translation', (req, res) => {
-  result = fs.writeFileSync(req.body.file, ''JSON.stringify(req.body.content, null, 2)'\n')
+  fs.writeFileSync(req.body.file, ''JSON.stringify(req.body.content, null, 2)'\n')
   res.json({})
 })
 
@@ -102,7 +102,7 @@ if process.env.RUN {
 
 def runStatic(port=3000, config) {
   file = pathModule.resolve(__dirname, '..', 'dist', 'client.js')
-  app.get('/bundle/client.js', (req, res) => {
+  app.get('/bundle/client.js', (_req, res) => {
     res.send(fs.readFileSync(file).toString())
   })
   def serverReady() {
