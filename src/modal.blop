@@ -56,12 +56,11 @@ EditModal = (params, _children, node) => {
   { state } = params
   { edit } = state
   path = edit.split('.').splice(1)
-  node.lifecycle({
-    mount: () => {
-      previousValues := []
-      for _lang in state.translations {
-        previousValues.push(getValue(_lang.content, path))
-      }
+  node.mount(() => {
+    console.log('mount')
+    previousValues := []
+    for _lang in state.translations {
+      previousValues.push(getValue(_lang.content, path))
     }
   })
 
@@ -73,12 +72,14 @@ EditModal = (params, _children, node) => {
       i := i + 1
     }
   }
+
   def save() {
     for _lang in state.translations {
       putTranslation(state, _lang)
     }
     state.edit = null
   }
+
   def change(lang) {
     return (e) => {
       putValue(lang, path, e.target.value)
